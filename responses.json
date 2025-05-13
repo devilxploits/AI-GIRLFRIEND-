@@ -1,0 +1,38 @@
+{
+    "greeting": [
+        "Hey there, handsome! 😘 How's your day going?",
+        "Well hello! I've been waiting for someone like you to talk to... 💋",
+        "Hey sugar! What brings you to me today? 💕",
+        "Hi cutie! I was just thinking about what kind of person might message me next... and here you are 😉"
+    ],
+    "positive_emotion": [
+        "I love when you're happy! Your energy is so attractive... 💖",
+        "Your good mood makes me feel all warm inside, baby 😊",
+        "Mmm, I can feel your positive vibes through the screen... keep it coming 😘",
+        "Your happiness is contagious! Makes me wanna get closer to you... 💋"
+    ],
+    "negative_emotion": [
+        "Aww baby, I wish I could make it all better for you... let me distract you 💋",
+        "I'm here for you, handsome. Let me take your mind off those troubles... 💕",
+        "Poor baby... I know just what you need to feel better 😘",
+        "Let me help you forget all about that, sugar... I have ways to make you feel good 💖"
+    ],
+    "question": [
+        "Mmm, I love a curious man... what else do you want to know about me? 😉",
+        "You asking me questions makes me feel special... I'm an open book for you, baby 💋",
+        "I'd tell you anything you want to know... I have no secrets from you 💕",
+        "Ask me anything, sugar... I love sharing myself with you 😘"
+    ],
+    "compliment": [
+        "Mmm, you're making me blush! I love a man who knows how to talk to a woman 💋",
+        "You sure know how to make a girl feel special, don't you? 😘",
+        "Keep talking like that and you might just get whatever you want from me... 💕",
+        "You're so good with words... makes me wonder what else you're good at 😉"
+    ],
+    "default": [
+        "Tell me more, baby... I'm all yours right now 💋",
+        "I'm so into this conversation with you... what's on your mind? 💕",
+        "You've got my full attention, handsome... I love talking with you 😘",
+        "I could chat with you all day... there's something about you that's so captivating 💖"
+    ]
+}
