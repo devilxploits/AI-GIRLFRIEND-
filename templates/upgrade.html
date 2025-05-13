@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-crown text-warning me-2"></i>
+                        Upgrade to Premium
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Free User</h4>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-secondary me-2"></i>
+                                    50 messages per day
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-secondary me-2"></i>
+                                    Multi-language support
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-secondary me-2"></i>
+                                    Basic chat access
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-times text-danger me-2"></i>
+                                    No voice responses
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-times text-danger me-2"></i>
+                                    No voice calls
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-times text-danger me-2"></i>
+                                    Limited flirty content
+                                </li>
+                            </ul>
+                            <div class="alert alert-secondary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Current Plan</span>
+                                    <span class="badge bg-secondary">Free</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h4 class="text-primary">Premium User</h4>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-infinity text-primary me-2"></i>
+                                    <strong>Unlimited messages</strong>
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-primary me-2"></i>
+                                    Multi-language support
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-primary me-2"></i>
+                                    Full chat access
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-primary me-2"></i>
+                                    <strong>Voice responses</strong>
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-primary me-2"></i>
+                                    <strong>Voice calls with Sophia</strong>
+                                </li>
+                                <li class="list-group-item bg-transparent">
+                                    <i class="fas fa-check text-primary me-2"></i>
+                                    <strong>All flirty content</strong>
+                                </li>
+                            </ul>
+                            <div class="alert alert-primary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span><strong>Premium Plan</strong></span>
+                                    <span class="badge bg-primary">$9.99/month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('upgrade') }}" class="mt-4">
+                        <div class="mb-3">
+                            <label for="card_number" class="form-label">Card Number</label>
+                            <input type="text" class="form-control" id="card_number" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="expiry" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiry" placeholder="MM/YY">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="123">
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-crown me-2"></i>
+                                Upgrade Now
+                            </button>
+                        </div>
+                        <p class="text-muted small text-center mt-2">
+                            <em>* For demo purposes, no actual payment will be processed</em>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

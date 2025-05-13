@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophia - Your Flirty AI Companion</title>
+    
+    <!-- Bootstrap CSS (Replit Dark Theme) -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <div class="avatar-circle me-2">
+                    <span class="avatar-text">S</span>
+                </div>
+                <span>Sophia</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Chat</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_admin %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin</a>
+                            </li>
+                        {% endif %}
+                        {% if not current_user.is_premium %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('upgrade') }}">
+                                    <i class="fas fa-crown text-warning"></i> Upgrade
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" id="start-call-btn">
+                                    <i class="fas fa-phone text-success"></i> Call Sophia
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Flash messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    
+    <!-- Main content -->
+    <div class="container-fluid py-3">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <!-- Call Modal for Premium Users -->
+    {% if current_user.is_authenticated and current_user.is_premium %}
+    <div class="modal fade" id="callModal" tabindex="-1" aria-labelledby="callModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="callModalLabel">
+                        <i class="fas fa-phone text-success"></i> 
+                        Calling Sophia...
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="avatar-circle-large mx-auto mb-3">
+                        <span class="avatar-text">S</span>
+                    </div>
+                    <div id="call-status">Connecting...</div>
+                    <div class="call-animation mt-3">
+                        <div class="call-wave"></div>
+                        <div class="call-wave"></div>
+                        <div class="call-wave"></div>
+                    </div>
+                    <div id="call-message" class="mt-3 d-none">
+                        <div class="bubble">
+                            <p id="call-text" class="mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="end-call-btn">
+                        <i class="fas fa-phone-slash"></i> End Call
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark">
+        <div class="container text-center">
+            <span class="text-muted">© 2025 Sophia AI - All rights reserved</span>
+        </div>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+    
+    <!-- Call feature script for premium users -->
+    {% if current_user.is_authenticated and current_user.is_premium %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startCallBtn = document.getElementById('start-call-btn');
+            const endCallBtn = document.getElementById('end-call-btn');
+            const callModal = new bootstrap.Modal(document.getElementById('callModal'));
+            const callStatus = document.getElementById('call-status');
+            const callMessage = document.getElementById('call-message');
+            const callText = document.getElementById('call-text');
+            
+            // Start call
+            startCallBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                callModal.show();
+                
+                // Make API call to start the call
+                fetch('/call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Simulate call connection
+                        setTimeout(() => {
+                            callStatus.textContent = 'Connected';
+                            callStatus.classList.add('text-success');
+                            
+                            // Simulate Sophia speaking
+                            setTimeout(() => {
+                                callMessage.classList.remove('d-none');
+                                callText.textContent = "Hey baby, I've been waiting for your call... What would you like to talk about? 💋";
+                            }, 1000);
+                        }, 2000);
+                    } else {
+                        callStatus.textContent = 'Call failed: ' + data.error;
+                        callStatus.classList.add('text-danger');
+                    }
+                })
+                .catch(error => {
+                    callStatus.textContent = 'Call error: ' + error;
+                    callStatus.classList.add('text-danger');
+                });
+            });
+            
+            // End call
+            endCallBtn.addEventListener('click', function() {
+                callModal.hide();
+                
+                // Reset call UI
+                setTimeout(() => {
+                    callStatus.textContent = 'Connecting...';
+                    callStatus.classList.remove('text-success', 'text-danger');
+                    callMessage.classList.add('d-none');
+                    callText.textContent = '';
+                }, 500);
+            });
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
