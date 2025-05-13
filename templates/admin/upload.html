@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Upload Content</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_content') }}">Content</a></li>
+                    <li class="breadcrumb-item active">Upload</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card bg-dark shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Upload New Content for Sophia</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_upload_content') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Select File</label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                            <div class="form-text">
+                                Supported formats: JPG, PNG, GIF, MP4, MOV
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="content_type" class="form-label">Content Type</label>
+                            <select class="form-select" id="content_type" name="content_type" required>
+                                <option value="">Select content type</option>
+                                <option value="image">Image</option>
+                                <option value="video">Video</option>
+                                <option value="reel">Reel</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="caption" class="form-label">Caption (Optional)</label>
+                            <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="Add a caption for social media posts..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="platform" class="form-label">Platform</label>
+                            <select class="form-select" id="platform" name="platform" required>
+                                <option value="all">All Platforms</option>
+                                <option value="instagram">Instagram Only</option>
+                                <option value="telegram">Telegram Only</option>
+                                <option value="web">Website Only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="scheduled_date" class="form-label">Schedule Date (Optional)</label>
+                            <input type="date" class="form-control" id="scheduled_date" name="scheduled_date">
+                            <div class="form-text">
+                                If not specified, the content will be scheduled for the next day
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <div class="d-flex">
+                                <i class="fas fa-info-circle me-2 mt-1"></i>
+                                <div>
+                                    <strong>Content Guidelines:</strong>
+                                    <ul class="mb-0 ps-3">
+                                        <li>Use consistently styled images/videos of Sophia</li>
+                                        <li>Seductive yet tasteful content is allowed</li>
+                                        <li>For best results, use images with the same model/person</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>Upload Content
+                            </button>
+                            <a href="{{ url_for('admin_content') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

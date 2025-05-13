@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Content Management</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Content</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-end">
+            <a href="{{ url_for('admin_upload_content') }}" class="btn btn-primary">
+                <i class="fas fa-upload me-2"></i>Upload New Content
+            </a>
+        </div>
+    </div>
+    
+    <!-- Content Table -->
+    <div class="card bg-dark shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Sophia's Content</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Preview</th>
+                            <th>Type</th>
+                            <th>Caption</th>
+                            <th>Platform</th>
+                            <th>Status</th>
+                            <th>Scheduled</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in content.items %}
+                        <tr>
+                            <td>
+                                {% if item.content_type == 'image' %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.file_path) }}" 
+                                         alt="Sophia content" class="thumbnail-preview">
+                                {% else %}
+                                    <div class="video-thumbnail">
+                                        <i class="fas fa-play-circle fa-2x"></i>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.content_type|capitalize }}</td>
+                            <td>
+                                {% if item.caption %}
+                                    {{ item.caption[:50] }}{% if item.caption|length > 50 %}...{% endif %}
+                                {% else %}
+                                    <span class="text-muted">No caption</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.platform|capitalize }}</td>
+                            <td>
+                                {% if item.is_posted %}
+                                    <span class="badge bg-success">Posted</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.scheduled_time %}
+                                    {{ item.scheduled_time.strftime('%Y-%m-%d') }}
+                                {% else %}
+                                    <span class="text-muted">Not scheduled</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contentModal{{ item.id }}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Content Modal -->
+                                <div class="modal fade" id="contentModal{{ item.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Content Details</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="text-center mb-3">
+                                                    {% if item.content_type == 'image' %}
+                                                        <img src="{{ url_for('static', filename='uploads/' + item.file_path) }}" 
+                                                             alt="Sophia content" class="img-fluid rounded">
+                                                    {% else %}
+                                                        <video controls class="img-fluid rounded">
+                                                            <source src="{{ url_for('static', filename='uploads/' + item.file_path) }}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    {% endif %}
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <strong>Type:</strong> {{ item.content_type|capitalize }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <strong>Caption:</strong> {{ item.caption or "No caption" }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <strong>Platform:</strong> {{ item.platform|capitalize }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <strong>Status:</strong> {{ "Posted" if item.is_posted else "Pending" }}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <strong>Scheduled:</strong> 
+                                                    {% if item.scheduled_time %}
+                                                        {{ item.scheduled_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                    {% else %}
+                                                        Not scheduled
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <strong>Posted:</strong> 
+                                                    {% if item.posted_time %}
+                                                        {{ item.posted_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                    {% else %}
+                                                        Not posted
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mb-3">
+                                                    <strong>Created:</strong> {{ item.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="#" method="post" class="d-inline">
+                                                    <input type="hidden" name="content_id" value="{{ item.id }}">
+                                                    <input type="hidden" name="action" value="toggle-status">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        {% if item.is_posted %}
+                                                            <i class="fas fa-undo me-1"></i> Mark as Pending
+                                                        {% else %}
+                                                            <i class="fas fa-check me-1"></i> Mark as Posted
+                                                        {% endif %}
+                                                    </button>
+                                                </form>
+                                                <form action="#" method="post" class="d-inline ms-2">
+                                                    <input type="hidden" name="content_id" value="{{ item.id }}">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-trash me-1"></i> Delete
+                                                    </button>
+                                                </form>
+                                                <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <nav aria-label="Content pagination">
+                <ul class="pagination justify-content-center mt-3">
+                    <li class="page-item {{ 'disabled' if not content.has_prev else '' }}">
+                        <a class="page-link" href="{{ url_for('admin_content', page=content.prev_num) if content.has_prev else '#' }}" tabindex="{{ '-1' if not content.has_prev else '0' }}" aria-disabled="{{ 'true' if not content.has_prev else 'false' }}">Previous</a>
+                    </li>
+                    
+                    {% for page_num in content.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                        {% if page_num %}
+                            <li class="page-item {{ 'active' if page_num == content.page else '' }}">
+                                <a class="page-link" href="{{ url_for('admin_content', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <li class="page-item {{ 'disabled' if not content.has_next else '' }}">
+                        <a class="page-link" href="{{ url_for('admin_content', page=content.next_num) if content.has_next else '#' }}" aria-disabled="{{ 'true' if not content.has_next else 'false' }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
